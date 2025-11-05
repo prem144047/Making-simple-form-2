@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Employees</title>
+    <style>
+      body {
+        font-family: "Poppins", sans-serif;
+        background-color: #f5f6fa;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      h1 {
+        color: #2f3640;
+        margin-top: 30px;
+      }
+
+      .form-container {
+        background: #fff;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        width: 350px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      input {
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+        width: 100%;
+      }
+
+      button {
+        padding: 10px;
+        border: none;
+        border-radius: 8px;
+        background-color: #273c75;
+        color: white;
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      button:hover {
+        background-color: #40739e;
+      }
+
+      .message {
+        font-weight: bold;
+        margin: 10px 0;
+      }
+
+      .error {
+        color: red;
+      }
+
+      .success {
+        color: green;
+      }
+
+      .employees-list {
+        width: 90%;
+        max-width: 700px;
+      }
+
+      .employee-card {
+        background: #fff;
+        padding: 15px;
+        border-radius: 12px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .employee-details {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .employee-details p {
+        margin: 2px 0;
+      }
+
+      .delete-btn {
+        background-color: #e84118;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 12px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      .delete-btn:hover {
+        background-color: #c23616;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Add Employees</h1>
+
+    <div class="form-container">
+      <input type="text" id="name" placeholder="Enter name" />
+      <input type="text" id="profession" placeholder="Enter profession" />
+      <input type="number" id="age" placeholder="Enter age" />
+      <button id="addBtn">Add Employee</button>
+
+      <div id="message" class="message"></div>
+    </div>
+
+    <div class="employees-list">
+      <h2>Added Employees</h2>
+      <div id="employeeList"></div>
+    </div>
+    <script>
+         let employees = [];
+      let idCounter = 1;
+
+      const addBtn = document.getElementById("addBtn");
+      const nameInput = document.getElementById("name");
+      const professionInput = document.getElementById("profession");
+      const ageInput = document.getElementById("age");
+      const messageDiv = document.getElementById("message");
+      const employeeList = document.getElementById("employeeList");
+
+      // Add Employee Function
+      addBtn.addEventListener("click", () => {
+        const name = nameInput.value.trim();
+        const profession = professionInput.value.trim();
+        const age = ageInput.value.trim();
+
+        // Validation
+        if (!name || !profession || !age) {
+          showMessage("Error: Please make sure all fields are filled!", "error");
+          return;
+        }
+
+        // Create employee object
+        const newEmployee = {
+          id: idCounter++,
+          name,
+          profession,
+          age: parseInt(age),
+        };
+
+        employees.push(newEmployee);
+        showMessage("Success: Employee added successfully!", "success");
+
+        // Clear input fields
+        nameInput.value = "";
+        professionInput.value = "";
+        ageInput.value = "";
+
+        // Update display
+        renderEmployees();
+      });
+
+      // Delete Employee Function
+      function deleteEmployee(id) {
+        employees = employees.filter((emp) => emp.id !== id);
+        renderEmployees();
+      }
+
+      // Render employee list
+      function renderEmployees() {
+        employeeList.innerHTML = "";
+
+        if (employees.length === 0) {
+          employeeList.innerHTML = "<p>No employees added yet.</p>";
+          return;
+        }
+
+        employees.forEach((emp) => {
+          const empDiv = document.createElement("div");
+          empDiv.classList.add("employee-card");
+
+          empDiv.innerHTML = `
+            <div class="employee-details">
+              <p><strong>ID:</strong> ${emp.id}</p>
+              <p><strong>Name:</strong> ${emp.name}</p>
+              <p><strong>Profession:</strong> ${emp.profession}</p>
+              <p><strong>Age:</strong> ${emp.age}</p>
+            </div>
+            <button class="delete-btn" onclick="deleteEmployee(${emp.id})">Delete</button>
+          `;
+
+          employeeList.appendChild(empDiv);
+        });
+      }
+
+      // Message display
+      function showMessage(msg, type) {
+        messageDiv.textContent = msg;
+        messageDiv.className = `message ${type}`;
+
+        // Auto-clear message after 2.5 seconds
+        setTimeout(() => {
+          messageDiv.textContent = "";
+        }, 2500);
+      }
+
+      // Default view
+      renderEmployees();
+    </script>
+    </body>
+</html>
